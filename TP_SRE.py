@@ -1272,6 +1272,8 @@ if __name__ == "__main__":
 
 import pandas as pd
 
+import pandas as pd
+
 def compute_block_maxima(df, freq='M'):
     """
     Calcule les maxima par bloc temporel sur les rendements logarithmiques négatifs.
@@ -1281,7 +1283,7 @@ def compute_block_maxima(df, freq='M'):
         freq (str): Fréquence des blocs temporels (par défaut 'M' pour mois).
     
     Returns:
-        pd.Series: Série des maxima par bloc temporel.
+        pd.Series: Série des maxima par bloc temporel, avec les dates réelles des maxima.
     """
     # Créer une copie explicite pour éviter les warnings
     df_copy = df.copy()
@@ -1292,8 +1294,11 @@ def compute_block_maxima(df, freq='M'):
     # Définir des blocs temporels
     df_copy['block'] = df_copy.index.to_period(freq)
     
-    # Extraire le maximum (qui est en fait le minimum original) par bloc
-    block_maxima = df_copy.groupby('block')['neg_log_returns'].max()
+    # Trouver l'index (date réelle) du maximum dans chaque bloc
+    block_maxima_dates = df_copy.groupby('block')['neg_log_returns'].idxmax()
+    
+    # Extraire les valeurs des maxima en utilisant les dates réelles
+    block_maxima = df_copy.loc[block_maxima_dates, 'neg_log_returns']
     
     return block_maxima
 
@@ -1311,8 +1316,15 @@ if __name__ == "__main__":
     main()
 
 
+
 # In[36]:
 
+
+import plotly.graph_objects as go
+import pandas as pd
+
+import plotly.graph_objects as go
+import pandas as pd
 
 def plot_block_maxima(df, block_maxima):
     """
@@ -1321,39 +1333,51 @@ def plot_block_maxima(df, block_maxima):
     Args:
         df (pd.DataFrame): DataFrame contenant les log-returns.
         block_maxima (pd.Series): Série des maxima par bloc temporel.
+    
+    Returns:
+        go.Figure: Un graphique Plotly.
     """
-    plt.figure(figsize=(12, 6))
+    fig = go.Figure()
     
     # Tracer la série des log-returns négatifs (en gris pour le contexte)
-    plt.plot(df.index, -df['log_returns'], label="Log Returns inversés", color='lightgray', alpha=0.6)
+    fig.add_trace(go.Scatter(
+        x=df.index, y=-df['log_returns'], mode='lines', name='Log Returns inversés', line=dict(color='lightgray', width=1)
+    ))
     
     # Tracer les block maxima en points rouges
-    plt.scatter(block_maxima.index.to_timestamp(), block_maxima, color='red', label="Block Maxima (pertes extrêmes)", zorder=3)
+    fig.add_trace(go.Scatter(
+        x=block_maxima.index, y=block_maxima, mode='markers', name='Block Maxima (pertes extrêmes)', marker=dict(color='red', size=8)
+    ))
     
     # Ajouter titres et légendes
-    plt.title("Block Maxima des Log-Returns (pertes extrêmes)")
-    plt.xlabel("Temps")
-    plt.ylabel("Pertes extrêmes (en valeur absolue)")
-    plt.legend()
-    plt.grid(True)
+    fig.update_layout(
+        title="Block Maxima des Log-Returns (pertes extrêmes)",
+        xaxis_title="Temps",
+        yaxis_title="Pertes extrêmes (en valeur absolue)",
+        legend=dict(x=0.02, y=0.98),
+        xaxis=dict(showgrid=True),  # Activer la grille pour l'axe X
+        yaxis=dict(showgrid=True)   # Activer la grille pour l'axe Y
+    )
     
-    # Afficher le graphique
-    plt.show()
+    return fig
 
 def main():
     # Charger les données
     df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
 
+    # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Calculer les maxima par bloc
-    block_maxima = compute_block_maxima(df_train)
+    block_maxima = compute_block_maxima(df_train,"Y")
+
+    print(block_maxima.head(5))
     
-    # Afficher un aperçu des résultats
-    print(block_maxima.head())
+    # Créer le graphique avec la nouvelle fonction
+    fig = plot_block_maxima(df_train, block_maxima)
     
-    # Afficher le graphique
-    plot_block_maxima(df_train, block_maxima)
+    # Afficher le graphique avec plotly
+    fig.show()
 
 if __name__ == "__main__":
     main()
@@ -1539,7 +1563,9 @@ if __name__ == "__main__":
 # In[46]:
 
 
-def compute_var_tve(alpha, c, loc, scale):
+from scipy.stats import genextreme
+
+def compute_var_tve(alpha, c, loc, scale, freq='M'):
     """
     Calcule la Value at Risk (VaR) basée sur la distribution GEV (Generalized Extreme Value).
     
@@ -1548,11 +1574,23 @@ def compute_var_tve(alpha, c, loc, scale):
         c (float): Paramètre de forme de la distribution GEV.
         loc (float): Paramètre de localisation de la distribution GEV.
         scale (float): Paramètre d'échelle de la distribution GEV.
+        freq (str): Fréquence des blocs temporels ('M' pour mois, 'Q' pour trimestre, 'Y' pour année).
         
     Returns:
         float: La VaR calculée à partir de la distribution GEV.
     """
-    alpha_bm = alpha**21  # Décalage spécifique lié à la taille de la fenêtre
+    # Définir l'exposant en fonction de la fréquence
+    if freq == 'M':  # Mensuel
+        exponent = 21  # ~21 jours ouvrés par mois
+    elif freq == 'Q':  # Trimestriel
+        exponent = 63  # ~63 jours ouvrés par trimestre (21 jours/mois * 3 mois)
+    elif freq == 'Y':  # Annuel
+        exponent = 252  # ~252 jours ouvrés par an (21 jours/mois * 12 mois)
+    else:
+        raise ValueError("Fréquence non reconnue. Utilisez 'M' (mois), 'Q' (trimestre) ou 'Y' (année).")
+    
+    # Calcul de alpha_bm en fonction de la fréquence
+    alpha_bm = alpha**exponent
     
     # Calcul de la VaR via la fonction quantile de la distribution GEV
     var_tve = genextreme.ppf(alpha_bm, c=c, loc=loc, scale=scale)

@@ -1,2 +1,6 @@
-#var en %; dans l'IC aussi; liste quez l'utilisateur peut choisir 
-#faire des onglets 
+var en %; dans l'IC aussi; liste quez l'utilisateur peut choisir 
+faire des onglets 
+
+mettre les graphiques pour la Gumbell maybe, et les QQ plot et PP plot 
+
+peut etre revoir la valeur sur le slider pour le quantile 
