@@ -11,13 +11,54 @@ app = dash.Dash(__name__, suppress_callback_exceptions=True)
 app.title = "Projet de Statistiques des Risques Extrêmes"
 
 # Liste des tickers
-tickers = ['^FCHI', 'AAPL', 'GOOG', 'MSFT', 'AMZN']
+tickers = [
+    '^FCHI',  # CAC 40
+    '^DJI',   # Dow Jones Industrial Average
+    '^GSPC',  # S&P 500
+    '^IXIC',  # NASDAQ Composite
+    'AAPL',   # Apple
+    'GOOGL',  # Google
+    'MSFT',   # Microsoft
+    'AMZN',   # Amazon
+    'NVDA',   # NVIDIA
+]
 
 # Mise en page avec onglets
 app.layout = html.Div(style={'fontFamily': 'Arial', 'padding': '20px'}, children=[
     # Titre et noms au-dessus des onglets
     html.H1("Projet de Statistiques des Risques Extrêmes", style={'textAlign': 'center', 'color': '#333'}),
     html.Div([html.H4("Mathis Bouillon, Cheryl Kouadio", style={'textAlign': 'center', 'color': '#555'})], style={'marginBottom': '30px'}),
+    
+    # Paragraphe de présentation
+    html.Div([
+        html.P(
+            "Cette interface permet d'explorer différentes méthodes de calcul de la Value-at-Risk (VaR) et de l'Expected Shortfall (ES). "
+            "Elle est divisée en trois onglets :",
+            style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
+        ),
+        html.Ul([
+            html.Li(
+                "I. Value-at-Risk : Fondements et modélisation - Cet onglet présente des méthodes paramétriques (Gaussienne, Student) "
+                "et non paramétriques (historique, bootstrap) pour calculer la VaR, ainsi que l'introduction de l'Expected Shortfall.",
+                style={'fontSize': '16px', 'color': '#555', 'marginBottom': '10px'}
+            ),
+            html.Li(
+                "II. Value-at-Risk par modélisation des extrêmes - Cet onglet se concentre sur la théorie des valeurs extrêmes (EVT), "
+                "avec des méthodes comme Block Maxima et Peaks Over Threshold (PoT).",
+                style={'fontSize': '16px', 'color': '#555', 'marginBottom': '10px'}
+            ),
+            html.Li(
+                "III. Value-at-Risk dynamique - Cet onglet explore la VaR dynamique, notamment à l'aide d'un modèle GARCH.",
+                style={'fontSize': '16px', 'color': '#555', 'marginBottom': '10px'}
+            ),
+        ]),
+        html.P(
+            "Vous pouvez naviguer à votre gré dans les différents onglets ; tout s'actualise au fil de vos choix. "
+            "Par exemple, il faudra notamment spécifier le niveau de confiance alpha pour le calcul des VaR ou de l'ES, "
+            "ou encore un seuil pour la méthode PoT (voir onglet 2).",
+            style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
+        ),
+    ], style={'marginBottom': '30px'}),
     
     # Onglets
     dcc.Tabs(id="tabs", value='tab1', children=[
@@ -61,7 +102,7 @@ def update_tab(tab_name):
                 html.P(
                     "La Value at Risk (VaR) est une mesure statistique utilisée pour évaluer le risque de perte d'un actif ou d'un portefeuille. "
                     "Elle permet d'estimer la perte maximale attendue sur une période donnée, avec un certain niveau de confiance.",
-                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'center', 'marginBottom': '20px'}
+                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
                 ),
                 html.Div(style={'display': 'flex', 'justifyContent': 'center', 'gap': '30px', 'marginTop': '20px'}, children=[
                     html.Div(id='var-historical-box', style={
@@ -85,11 +126,11 @@ def update_tab(tab_name):
                     ]),
                     html.Div(id='var-gaussian-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#e3f2fd', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f8f9fa', 'width': '30%'
                     }),
                     html.Div(id='var-student-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#f7c2c2', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f1f3f4', 'width': '30%'
                     }),
                 ]),
             ]),
@@ -101,20 +142,20 @@ def update_tab(tab_name):
                     "L'Expected Shortfall (ES), ou perte attendue, est la moyenne des pertes qui dépassent la VaR. "
                     "Contrairement à la VaR qui donne un seuil de perte pour un certain niveau de confiance, "
                     "l'ES donne l'ampleur moyenne de la perte au-delà de ce seuil.",
-                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'center', 'marginBottom': '20px'}
+                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
                 ),
                 html.Div(style={'display': 'flex', 'justifyContent': 'center', 'gap': '30px'}, children=[
                     html.Div(id='es-gaussian-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#ffeb3b', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f8f9fa', 'width': '30%'
                     }),
                     html.Div(id='es-historical-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#8bc34a', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f1f3f4', 'width': '30%'
                     }),
                     html.Div(id='es-student-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#f44336', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f8f9fa', 'width': '30%'
                     }),
                 ]),
             ]),
@@ -122,25 +163,25 @@ def update_tab(tab_name):
             # Section Expected Shortfall Théorique
             html.Div(style={'marginTop': '40px'}, children=[
                 html.H3("Expected Shortfall (ES) Théorique", style={'textAlign': 'center', 'color': '#333'}),
-                html.P("L'ES théorique est défini comme :", style={'fontSize': '16px', 'color': '#555', 'textAlign': 'center'}),
+                html.P("L'ES théorique est définie comme :", style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left'}),
                 dcc.Markdown(
                     r"""
-                    $$
+                    $
                     ES_\alpha = \frac{1}{1 - \alpha} 
                     \int_{-\infty}^{VaR_\alpha} x f(x) \,dx 
-                    $$
+                    $
                     """,
                     mathjax=True,
-                    style={'textAlign': 'center', 'fontSize': '18px'}
+                    style={'textAlign': 'left', 'fontSize': '18px'}
                 ),
                 html.Div(style={'display': 'flex', 'justifyContent': 'center', 'gap': '30px'}, children=[
                     html.Div(id='es-theo-gaussian-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#ffeb3b', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f1f3f4', 'width': '30%'
                     }),
                     html.Div(id='es-theo-student-box', style={
                         'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                        'textAlign': 'center', 'backgroundColor': '#f44336', 'width': '30%'
+                        'textAlign': 'center', 'backgroundColor': '#f8f9fa', 'width': '30%'
                     }),
                 ]),
             ]),
@@ -164,11 +205,13 @@ def update_tab(tab_name):
         
             # Section Block Maxima
             html.Div([
-                html.H4("Partie Block Maxima", style={'textAlign': 'center', 'color': '#333'}),
+                html.H4("Block Maxima", style={'textAlign': 'center', 'color': '#333'}),
                 html.P(
                     "La méthode Block Maxima consiste à diviser les données en blocs (par exemple, mensuels ou annuels) "
                     "et à extraire le maximum de chaque bloc pour modéliser les extrêmes.",
-                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'center', 'marginBottom': '20px'}
+                    "Vous pouvez choisir la fréquence des blocs à l'aide de la liste déroulante ci-dessous, "
+                    "et cela sera visible sur le graphique interactif.",
+                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
                 ),
             ]),
         
@@ -176,9 +219,9 @@ def update_tab(tab_name):
             html.Div([
                 html.Label("Fréquence des blocs :", style={'fontSize': '18px'}),
                 dcc.Dropdown(id='freq-dropdown-tve', options=[
-                    {'label': 'Mensuel', 'value': 'M'},
-                    {'label': 'Trimestriel', 'value': 'Q'},
-                    {'label': 'Annuel', 'value': 'Y'}
+                    {'label': 'Mensuelle', 'value': 'M'},
+                    {'label': 'Trimestrielle', 'value': 'Q'},
+                    {'label': 'Annuelle', 'value': 'Y'}
                 ], value='M', style={'width': '50%'})
             ], style={'marginBottom': '20px'}),
         
@@ -191,24 +234,25 @@ def update_tab(tab_name):
                 dcc.Slider(id='confidence-level-slider_tve', min=90, max=99, step=1, marks={i: f"{i}%" for i in range(90, 100)}, value=99)
             ], style={'marginTop': '20px'}),
 
-            html.Div(id='var-tve-box', style={
-                    'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                    'textAlign': 'center', 'backgroundColor': '#e3f2fd', 'width': '30%'
-            }),
+            html.Div(id='var-tve-box', style={'marginTop': '20px'}),
             
             # Section PoT (Peaks over Threshold)
             html.Div([
-                html.H4("Partie Peaks over Threshold (PoT)", style={'textAlign': 'center', 'color': '#333'}),
+                html.H4("Peaks over Threshold (PoT)", style={'textAlign': 'center', 'color': '#333'}),
                 html.P(
                     "La méthode PoT consiste à modéliser les excès au-dessus d'un seuil donné en utilisant "
-                    "la distribution de Pareto généralisée (GPD).",
-                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'center', 'marginBottom': '20px'}
+                    "la distribution de Pareto généralisée (GPD). "
+                    "Le graphique ci-dessous (Mean Excess Plot) permet de régler l'affichage pour s'affranchir "
+                    "du comportement erratique des queues de distribution. Cela permet d'identifier le seuil "
+                    "à partir duquel on observe une tendance linéaire. Vous pouvez ensuite choisir la valeur "
+                    "de ce seuil à l'aide du champ de saisie.",
+                    style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginBottom': '20px'}
                 ),
             ]),
         
             # Sélection du quantile pour le Mean Excess Plot
             html.Div([
-                html.Label("Quantile pour le Mean Excess Plot :", style={'fontSize': '18px'}),
+                html.Label("Quantile pour l'affichage du Mean Excess Plot :", style={'fontSize': '18px'}),
                 dcc.Slider(id='quantile-slider', min=0.90, max=1, step=0.01, marks={i: f"{int(i*100)}%" for i in np.arange(0.90, 1.01, 0.01)}, value=0.95)
             ], style={'marginBottom': '20px'}),
         
@@ -230,10 +274,7 @@ def update_tab(tab_name):
             ], style={'marginBottom': '20px'}),
         
             # Affichage de la VaR PoT
-            html.Div(id='var-pot-box', style={
-                'padding': '20px', 'borderRadius': '15px', 'boxShadow': '2px 2px 10px #aaa',
-                'textAlign': 'center', 'backgroundColor': '#e3f2fd', 'width': '30%', 'marginTop': '20px'
-            }),
+            html.Div(id='var-pot-box', style={'marginTop': '20px'}),
         ])
     elif tab_name == 'tab3':
         return html.Div([html.H3("to be continued mdrr")])
@@ -260,7 +301,7 @@ def update_graphs(ticker, confidence_level, alpha_ic, train_start_date, train_en
     
     # Calcul des VaR
     var_hist = VaR_Hist(df_train['log_returns'], confidence_level / 100)
-    var_bootstrap, lower, upper = VaR_Hist_Bootstrap(df_train['log_returns'], confidence_level / 100, B=1000, alpha_IC=alpha_ic / 100)
+    var_bootstrap, lower, upper = VaR_Hist_Bootstrap(df_train['log_returns'], confidence_level / 100, B=10000, alpha_IC=alpha_ic / 100)
     var_gauss = VaR_Gauss(df_train['log_returns'], confidence_level / 100)
     var_student = calculate_var_student(df_train['log_returns'], confidence_level / 100)
     
@@ -282,15 +323,55 @@ def update_graphs(ticker, confidence_level, alpha_ic, train_start_date, train_en
     es_theo_student = ES_theorique(confidence_level / 100, var_student, pdf_skew_student)
     
     # Mise en forme des résultats
-    var_historical_content = html.Div([html.H3(f"VaR Historique ({confidence_level}%)"), html.P(f"{var_hist:.4f}")])
-    var_bootstrap_content = html.Div([html.H3(f"VaR Bootstrap ({confidence_level}%)"), html.P(f"{var_bootstrap:.4f}"), html.P(f"IC {alpha_ic}% : [{lower:.4f}, {upper:.4f}]")])
-    var_gaussian_content = html.Div([html.H3(f"VaR Gaussienne ({confidence_level}%)"), html.P(f"{var_gauss:.4f}")])
-    var_student_content = html.Div([html.H3(f"VaR Student ({confidence_level}%)"), html.P(f"{var_student:.4f}")])
-    es_gaussian_content = html.Div([html.H3(f"ES Gaussien ({confidence_level}%)"), html.P(f"{es_emp_gauss:.4f}")])
-    es_historical_content = html.Div([html.H3(f"ES Historique ({confidence_level}%)"), html.P(f"{es_emp_hist:.4f}")])
-    es_student_content = html.Div([html.H3(f"ES Student ({confidence_level}%)"), html.P(f"{es_emp_student:.4f}")])
-    es_theo_gaussian_content = html.Div([html.H3(f"ES Gaussien Théorique ({confidence_level}%)"), html.P(f"{es_theo_gauss:.4f}")])
-    es_theo_student_content = html.Div([html.H3(f"ES Skew-Student Théorique ({confidence_level}%)"), html.P(f"{es_theo_student:.4f}")])
+    var_historical_content = html.Div([
+        html.H3(f"VaR Historique ({confidence_level}%)"),
+        html.P(f"{var_hist*100:.4f}%"),
+        html.P(f"Avec un niveau de confiance de {confidence_level}%, une VaR historique de {var_hist*100:.4f}% signifie qu'il y a une probabilité de {100 - confidence_level}% que la perte journalière dépasse cette valeur.")
+    ])
+    
+    var_bootstrap_content = html.Div([
+        html.H3(f"VaR Bootstrap ({confidence_level}%)"),
+        html.P(f"{var_bootstrap*100:.4f}%"),
+        html.P(f"IC {alpha_ic}% : [{lower*100:.4f}%, {upper*100:.4f}%]")
+    ])
+    
+    var_gaussian_content = html.Div([
+        html.H3(f"VaR Gaussienne ({confidence_level}%)"),
+        html.P(f"{var_gauss*100:.4f}%")
+    ])
+    
+    var_student_content = html.Div([
+        html.H3(f"VaR Student ({confidence_level}%)"),
+        html.P(f"{var_student*100:.4f}%")
+    ])
+    
+    es_gaussian_content = html.Div([
+        html.H3(f"ES Gaussien ({confidence_level}%)"),
+        html.P(f"{es_emp_gauss*100:.4f}%"),
+        html.P(f"L'Expected Shortfall (ES) Gaussien de {es_emp_gauss*100:.4f}% signifie que, en cas de dépassement de la VaR, la perte moyenne attendue est de {es_emp_gauss*100:.4f}%.")
+    ], style={'backgroundColor': '#f8f9fa'})
+    
+    es_historical_content = html.Div([
+        html.H3(f"ES Historique ({confidence_level}%)"),
+        html.P(f"{es_emp_hist*100:.4f}%"),
+        html.P(f"L'Expected Shortfall (ES) Historique de {es_emp_hist*100:.4f}% signifie que, en cas de dépassement de la VaR, la perte moyenne attendue est de {es_emp_hist*100:.4f}%.")
+    ], style={'backgroundColor': '#f1f3f4'})
+    
+    es_student_content = html.Div([
+        html.H3(f"ES Student ({confidence_level}%)"),
+        html.P(f"{es_emp_student*100:.4f}%"),
+        html.P(f"L'Expected Shortfall (ES) Student de {es_emp_student*100:.4f}% signifie que, en cas de dépassement de la VaR, la perte moyenne attendue est de {es_emp_student*100:.4f}%.")
+    ], style={'backgroundColor': '#f8f9fa'})
+    
+    es_theo_gaussian_content = html.Div([
+        html.H3(f"ES Gaussien Théorique ({confidence_level}%)"),
+        html.P(f"{es_theo_gauss*100:.4f}%")
+    ], style={'backgroundColor': '#f1f3f4'})
+    
+    es_theo_student_content = html.Div([
+        html.H3(f"ES Skew-Student Théorique ({confidence_level}%)"),
+        html.P(f"{es_theo_student*100:.4f}%")
+    ], style={'backgroundColor': '#f8f9fa'})
     
     return price_fig, var_historical_content, var_bootstrap_content, var_gaussian_content, var_student_content, es_gaussian_content, es_historical_content, es_student_content, es_theo_gaussian_content, es_theo_student_content
 
@@ -323,10 +404,27 @@ def update_tve(ticker, train_start_date, train_end_date, test_start_date,
     
     var_tve = compute_var_tve(confidence_level_tve /100, c, loc, scale)
     
-    print(f"La VaR TVE à {confidence_level_tve}% de confiance est : {var_tve:.4f}")
-
-    # Retourner la figure dans une liste
-    return [fig_maxima , var_tve]
+    # Mapper les fréquences à des libellés explicites
+    freq_labels = {
+        'M': 'Mensuelle',
+        'Q': 'Trimestrielle',
+        'Y': 'Annuelle'
+    }
+    freq_label = freq_labels.get(freq, freq)  # Utiliser la fréquence telle quelle si non trouvée
+    
+    # Mise en forme des résultats pour l'onglet 2
+    var_tve_content = html.Div([
+        html.P(
+            f"Pour une fréquence {freq_label.lower()} à un niveau de confiance de {confidence_level_tve}%, la VaR avec la méthode Block Maxima est de : ",
+            style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginTop': '20px'}
+        ),
+        html.P(
+            f"**{var_tve*100:.4f}%**",
+            style={'fontSize': '16px', 'color': '#333', 'fontWeight': 'bold', 'textDecoration': 'underline','textAlign': 'center'}
+        )
+    ])
+    
+    return fig_maxima, var_tve_content
 
 @app.callback(
     [Output('mean-excess-plot', 'figure'),
@@ -337,7 +435,7 @@ def update_tve(ticker, train_start_date, train_end_date, test_start_date,
      Input('test-date-picker-tve', 'start_date'),
      Input('test-date-picker-tve', 'end_date'),
      Input('quantile-slider', 'value'),
-     Input('threshold-input', 'value'),  # Utiliser threshold-input au lieu de threshold-slider
+     Input('threshold-input', 'value'),
      Input('confidence-level-slider_tve', 'value')]
 )
 def update_pot(ticker, train_start_date, train_end_date, test_start_date, 
@@ -382,10 +480,15 @@ def update_pot(ticker, train_start_date, train_end_date, test_start_date,
     # Calculer la VaR PoT
     var_pot = calculate_var_tve_pot(alpha_pot, c, loc, scale, threshold)
     
-    # Afficher la VaR PoT
     var_pot_content = html.Div([
-        html.H3(f"VaR PoT ({confidence_level_tve}%)"),
-        html.P(f"{var_pot:.4f}")
+        html.P(
+            f"Pour un seuil de {threshold} et un niveau de confiance de {confidence_level_tve}%, la VaR avec la méthode PoT est de : ",
+            style={'fontSize': '16px', 'color': '#555', 'textAlign': 'left', 'marginTop': '20px'}
+        ),
+        html.P(
+            f"**{var_pot*100:.4f}%**",
+            style={'fontSize': '16px', 'color': '#333', 'fontWeight': 'bold', 'textDecoration': 'underline','textAlign': 'center'}
+        )
     ])
     
     return fig_mean_excess, var_pot_content

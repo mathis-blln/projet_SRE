@@ -3,7 +3,7 @@
 
 # ## Installation des packages
 
-# In[1]:
+# In[2]:
 
 
 import yfinance as yf
@@ -12,11 +12,15 @@ from sklearn.model_selection import train_test_split
 import pandas as pd 
 import numpy as np 
 import scipy.stats as st
+import pandas as pd
 
+
+# python -m jupyter nbconvert --to script TP_SRE.ipynb \\
+# à lancer pour convertir le markdoown en python (pour lancer le dash)
 
 # ## Importation des données
 
-# In[2]:
+# In[3]:
 
 
 def telecharger_donnees(ticker, start_date="1900-01-01"):
@@ -36,11 +40,15 @@ def telecharger_donnees(ticker, start_date="1900-01-01"):
     df['log_returns'] = np.log(df['Close'] / df['Close'].shift(1))
     return df
 
-'''
-# Exemple d'utilisation :
-df = telecharger_donnees("^FCHI", "2000-01-01")
-print(df.head())
-'''
+
+def main():
+
+    df = telecharger_donnees("^FCHI", "2000-01-01")
+    print(df.head()) 
+
+if __name__ == "__main__":
+    main()
+
 
 # ## Découpage apprentissage/test
 
@@ -50,7 +58,7 @@ print(df.head())
 # Histoire des taux avec la BCE
 # période de test : augmentation des taux
 
-# In[5]:
+# In[4]:
 
 
 def split_train_test(df, train_start_date, train_end_date, test_start_date, test_end_date):
@@ -76,8 +84,7 @@ def split_train_test(df, train_start_date, train_end_date, test_start_date, test
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
-
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     # Effectuer la division train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
 
@@ -88,7 +95,7 @@ if __name__ == "__main__":
 
 # ## Statistiques descriptives sur les 2 jeux de données
 
-# In[6]:
+# In[5]:
 
 
 import pandas as pd
@@ -148,7 +155,7 @@ def analyze_train_test_data(df_train, df_test):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
 
@@ -160,7 +167,7 @@ if __name__ == "__main__":
 
 # On cherche ici à superoser le log-rendement et le prix de clôture sur un même graphique
 
-# In[65]:
+# In[7]:
 
 
 import plotly.graph_objects as go
@@ -312,7 +319,7 @@ def VaR_Hist(x, alpha):
 # 
 # Calculer la VaR historique sur base d'apprentissage pour alpha=99%
 
-# In[9]:
+# In[ ]:
 
 
 if __name__ == "__main__":
@@ -326,7 +333,7 @@ if __name__ == "__main__":
     alpha = 0.99
     var_train = VaR_Hist(df_train['log_returns'], alpha)
 
-    print(f"VaR historique (niveau de confiance {alpha*100:.0f}%) sur les données d'apprentissage : {var_train}")
+    print(f"VaR historique (niveau de confiance {alpha*100:.0f}%) sur les données d'apprentissage : {var_train*100}%")
 
 
 # ## Question c
@@ -372,15 +379,13 @@ def VaR_Hist_Bootstrap(x, alpha, B, alpha_IC):
 # 
 # Calculer la VaR historique Bootstrap et l'IC associé à 90% sur base d'apprentissage pour alpha = 99%
 
-# #refaire sous forme de graphique
-
-# In[14]:
+# In[11]:
 
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_var_bootstrap(x, alpha, alpha_IC, B_min=1000, B_max=10000, step=10):
+def plot_var_bootstrap(x, alpha, alpha_IC, B_min=1000, B_max=10000, step=1000):
     """
     Trace l'évolution de la VaR bootstrap en fonction des valeurs de B.
 
@@ -421,7 +426,7 @@ if __name__ == "__main__":
     plot_var_bootstrap(df_train['log_returns'], alpha=0.99, alpha_IC=0.90)
 
 
-# In[11]:
+# In[59]:
 
 
 if __name__ == "__main__":
@@ -440,15 +445,15 @@ if __name__ == "__main__":
     )
 
     # Affichage des résultats
-    print(f"VaR historique bootstrap (niveau de confiance de 99%) : {var_hist_bootstrap}")
-    print(f"Intervalle de confiance à 90% : [{lower_bound}, {upper_bound}]")
+    print(f"VaR historique bootstrap (niveau de confiance de 99%) : {var_hist_bootstrap*100}%")
+    print(f"Intervalle de confiance à 90% : [{lower_bound*100}%, {upper_bound*100}%]")
 
 
 # ## Question e
 # 
 # Calculer le nombre d'exceptions sur la base de test associées à la VaR historique calculée en 1.b
 
-# In[12]:
+# In[13]:
 
 
 def count_var_exceptions(df_test, var_value):
@@ -490,7 +495,7 @@ if __name__ == "__main__":
 # Comparer statistiquement ce % d'exceptions avec le niveau de risque attendu (aide : on pourra par exemple passer par un IC de binomiale)
 # 
 
-# In[17]:
+# In[14]:
 
 
 '''import scipy.stats as st
@@ -521,7 +526,7 @@ print(f"Intervalle de confiance à {alpha_IC_binomiale*100:.0f}% pour la proport
 # 
 # a.	Ecrire une fonction calculant la VaR gaussienne d’un ensemble de log-rendements (VaR_Gauss(x, alpha) )
 
-# In[13]:
+# In[15]:
 
 
 def VaR_Gauss(x, alpha):
@@ -551,7 +556,7 @@ def VaR_Gauss(x, alpha):
 # 
 # Calculer la VaR gaussienne sur base d’apprentissage pour alpha = 99%.
 
-# In[14]:
+# In[60]:
 
 
 if __name__ == "__main__":
@@ -566,14 +571,14 @@ if __name__ == "__main__":
     var_gauss_train = VaR_Gauss(df_train['log_returns'], alpha)
 
     # Affichage du résultat
-    print(f"VaR gaussienne (niveau de confiance de {alpha*100:.0f}%) sur les données d'apprentissage : {var_gauss_train}")
+    print(f"VaR gaussienne (niveau de confiance de {alpha*100:.0f}%) sur les données d'apprentissage : {var_gauss_train*100}%")
 
 
 # ## Question c
 # 
 # Faire une validation ex-ante (analyses graphiques, QQ-plot, etc.)
 
-# In[15]:
+# In[17]:
 
 
 def analyze_log_returns(df_train):
@@ -633,7 +638,7 @@ if __name__ == "__main__":
 # ## Question d
 # Calculer la VaR gaussienne à 10j par la méthode du scaling
 
-# In[16]:
+# In[ ]:
 
 
 def VaR_Gauss_Scaling(var_gauss_1d, horizon=10):
@@ -664,8 +669,8 @@ if __name__ == "__main__":
     var_gauss_10d = VaR_Gauss_Scaling(var_gauss_train, horizon=10)
 
     # Affichage des résultats
-    print(f"VaR gaussienne à 1 jour (niveau de confiance {alpha*100:.0f}%) : {var_gauss_train}")
-    print(f"VaR gaussienne à 10 jours (niveau de confiance {alpha*100:.0f}%) : {var_gauss_10d}")
+    print(f"VaR gaussienne à 1 jour (niveau de confiance {alpha*100:.0f}%) : {var_gauss_train*100}%")
+    print(f"VaR gaussienne à 10 jours (niveau de confiance {alpha*100:.0f}%) : {var_gauss_10d*100}%")
 
 
 # ## Question e
@@ -679,7 +684,7 @@ if __name__ == "__main__":
 # *   dt=1jour
 # *   μ et σ les paramètres estimés en 2.b
 
-# In[17]:
+# In[ ]:
 
 
 def VaR_Gauss_Diffusion(S_0, mu, sigma, alpha, horizon=10, dt=1):
@@ -719,12 +724,12 @@ if __name__ == "__main__":
     var_diffusion_10d = VaR_Gauss_Diffusion(S_0, mu, sigma, alpha, horizon)
 
     # Affichage des résultats
-    print(f"VaR gaussienne à {horizon} jours (diffusion) : {var_diffusion_10d}")
+    print(f"VaR gaussienne à {horizon} jours (diffusion) : {var_diffusion_10d*100}%")
 
 
 # ## Question f
 
-# In[18]:
+# In[ ]:
 
 
 import numpy as np
@@ -758,8 +763,6 @@ def compute_EWMA_params(returns, lambd):
 
     return mu_ewma, sigma_ewma
 
-    return mu_lambda, sigma_lambda
-
 def VaR_Gauss_EWMA(returns, alpha, lambd):
     """
     Calcule la VaR gaussienne à 1 jour en utilisant la méthode EWMA.
@@ -783,7 +786,7 @@ def VaR_Gauss_EWMA(returns, alpha, lambd):
 
 # ## Question g
 
-# In[19]:
+# In[61]:
 
 
 def main():
@@ -806,7 +809,7 @@ def main():
 
         # ii. Calculer la VaR gaussienne EWMA sur base d’apprentissage
         var_ewma = VaR_Gauss_EWMA(df_train['log_returns'].values, alpha, lambd)
-        print(f"  VaR EWMA (alpha = {alpha}) = {var_ewma}")
+        print(f"  VaR EWMA (alpha = {alpha}) = {var_ewma*100}%")
 
         # iii. Calculer le nombre d’exceptions sur base de test
         exceptions = df_test[df_test['log_returns'] < var_ewma]
@@ -831,7 +834,7 @@ if __name__ == "__main__":
 
 # ### Fonction de densité
 
-# In[20]:
+# In[63]:
 
 
 from scipy.stats import t
@@ -855,7 +858,7 @@ def skew_student_pdf(x, mu, sigma, gamma, nu):
 
 # ### Fonction de log-vraisemblance
 
-# In[21]:
+# In[64]:
 
 
 def log_likelihood_skew_student(params, x):
@@ -874,7 +877,7 @@ def log_likelihood_skew_student(params, x):
 
 # ### Fonction d'optimisation
 
-# In[22]:
+# In[65]:
 
 
 from scipy.optimize import minimize
@@ -905,7 +908,7 @@ def estimate_skew_student_params(x):
 # 
 # Estimer les paramètres de loi Skew Student sur base d’apprentissage.
 
-# In[23]:
+# In[66]:
 
 
 def main():
@@ -935,7 +938,7 @@ if __name__ == "__main__":
 # ## Question c
 # Faire une validation ex-ante par QQ-plot.
 
-# In[24]:
+# In[67]:
 
 
 import numpy as np
@@ -974,7 +977,7 @@ def inverse_cdf(var, p):
         raise ValueError("Les paramètres estimés sont None.")
 
 
-# In[25]:
+# In[68]:
 
 
 import scipy.integrate as spi
@@ -1033,7 +1036,7 @@ if __name__ == "__main__":
 # 
 # Comparer la qualité de fit entre loi gaussienne et loi de skew Student par analyse graphique.
 
-# In[26]:
+# In[69]:
 
 
 import numpy as np
@@ -1120,7 +1123,7 @@ if __name__ == "__main__":
 # 
 # Calculer la VaR Skew Student sur base d’apprentissage pour alpha = 99%.
 
-# In[27]:
+# In[70]:
 
 
 def calculate_var_student(var, alpha=0.99):
@@ -1153,7 +1156,7 @@ def main():
     VaR_student_99 = calculate_var_student(df_train['log_returns'], alpha)
 
     # Affichage du résultat
-    print(f"La VaR Skew-Student à {alpha * 100:.0f}% de confiance est : {VaR_student_99:.4f}")
+    print(f"La VaR Skew-Student à {alpha * 100:.0f}% de confiance est : {VaR_student_99*100}%")
 
 if __name__ == "__main__":
     main()
@@ -1161,7 +1164,7 @@ if __name__ == "__main__":
 
 # # 4.Expected Shortfall
 
-# In[28]:
+# In[71]:
 
 
 import numpy as np
@@ -1218,18 +1221,18 @@ def main():
     var_hist = VaR_Hist(df_train['log_returns'], alpha)
     var_student = calculate_var_student(df_train['log_returns'], alpha)
 
-    print(f"VaR Gaussienne (alpha = {alpha}) : {var_gauss:.4f}")
-    print(f"VaR Historique (alpha = {alpha}) : {var_hist:.4f}")
-    print(f"VaR Skew-Student (alpha = {alpha}) : {var_student:.4f}")
+    print(f"VaR Gaussienne (alpha = {alpha*100}%) : {var_gauss*100:.4f}%")
+    print(f"VaR Historique (alpha = {alpha*100}%) : {var_hist*100:.4f}%")
+    print(f"VaR Skew-Student (alpha = {alpha*100}%) : {var_student*100:.4f}%")
 
     # Calcul des ES empiriques
     es_emp_gauss = ES_empirique(df_train['log_returns'], var_gauss)
     es_emp_hist = ES_empirique(df_train['log_returns'], var_hist)
     es_emp_student = ES_empirique(df_train['log_returns'], var_student)
 
-    print(f"ES empirique Gaussien (alpha = {alpha}) : {es_emp_gauss:.4f}")
-    print(f"ES empirique Historique (alpha = {alpha}) : {es_emp_hist:.4f}")
-    print(f"ES empirique Skew-Student (alpha = {alpha}) : {es_emp_student:.4f}")
+    print(f"ES empirique Gaussien (alpha = {alpha*100}%) : {es_emp_gauss*100:.4f}%")
+    print(f"ES empirique Historique (alpha = {alpha*100}%) : {es_emp_hist*100:.4f}%")
+    print(f"ES empirique Skew-Student (alpha = {alpha*100}%) : {es_emp_student*100:.4f}%")
 
     # Estimation des paramètres Skew-Student pour l'ES théorique
     mu_hat, sigma_hat, gamma_hat, nu_hat = estimate_skew_student_params(df_train['log_returns'].dropna())
@@ -1244,8 +1247,8 @@ def main():
     es_theo_gauss = ES_theorique(alpha, var_gauss, pdf_gauss)
     es_theo_student = ES_theorique(alpha, var_student, pdf_skew_student)
 
-    print(f"ES théorique Gaussien (alpha = {alpha}) : {es_theo_gauss:.4f}")
-    print(f"ES théorique Skew-Student (alpha = {alpha}) : {es_theo_student:.4f}")
+    print(f"ES théorique Gaussien (alpha = {alpha*100}%) : {es_theo_gauss*100:.4f}%")
+    print(f"ES théorique Skew-Student (alpha = {alpha*100}%) : {es_theo_student*100:.4f}%")
 
 if __name__ == "__main__":
     main()
@@ -1253,7 +1256,7 @@ if __name__ == "__main__":
 
 # # 5.Protocole de backtesting
 
-# In[ ]:
+# In[31]:
 
 
 #Cheryyyl je te laisse briller avec ton protocole mdrr 
@@ -1267,10 +1270,8 @@ if __name__ == "__main__":
 # ## Question a
 # Déterminer une taille de bloc s et construire un échantillon de maxima sur la base d’apprentissage.
 
-# In[35]:
+# In[32]:
 
-
-import pandas as pd
 
 import pandas as pd
 
@@ -1316,12 +1317,8 @@ if __name__ == "__main__":
     main()
 
 
+# In[33]:
 
-# In[36]:
-
-
-import plotly.graph_objects as go
-import pandas as pd
 
 import plotly.graph_objects as go
 import pandas as pd
@@ -1386,7 +1383,7 @@ if __name__ == "__main__":
 # ## Question b
 # Tracer le Gumbel plot pour juger de l’hypothèse ξ=0 (i.e. GEV vs EV)
 
-# In[37]:
+# In[34]:
 
 
 def plot_gumbel(block_maxima):
@@ -1436,7 +1433,7 @@ if __name__ == "__main__":
 # Estimer les paramètres de loi GEV (ou EV si pertinent)
 # 
 
-# In[44]:
+# In[35]:
 
 
 # On utilise la loi GEV car la droite du Gumbel plot n'est pas forcément linéaire,
@@ -1480,7 +1477,7 @@ if __name__ == "__main__":
 # ## Question d
 # Faire une validation ex-ante (analyses graphiques, QQ-plot, etc.)
 
-# In[45]:
+# In[36]:
 
 
 def plot_gev_diagnostics(block_maxima, c, loc, scale):
@@ -1560,7 +1557,7 @@ if __name__ == "__main__":
 # Calculer la VaR TVE par MB sur base d’apprentissage pour alpha = 99% \\
 # Attention :  $$ 𝜶(𝑩𝑴) =𝜶^s $$
 
-# In[46]:
+# In[72]:
 
 
 from scipy.stats import genextreme
@@ -1616,7 +1613,7 @@ def main():
     alpha = 0.99
     var_tve = compute_var_tve(alpha, c, loc, scale)
     
-    print(f"La VaR TVE à {alpha*100}% de confiance est : {var_tve:.4f}")
+    print(f"La VaR TVE à {alpha*100}% de confiance est : {var_tve*100:.4f}%")
 
 if __name__ == "__main__":
     main()
@@ -1627,7 +1624,7 @@ if __name__ == "__main__":
 # ## Question a
 # Ecrire une fonction permettant d’obtenir le mean excess plot
 
-# In[49]:
+# In[38]:
 
 
 import matplotlib.pyplot as plt
@@ -1661,7 +1658,7 @@ def mean_excess_plot(data, threshold_values):
 # *Attention : ne pas considérer ni les valeurs négatives de u, ni les valeurs trop extrêmes, au risque d’écraser l’échelle visuelle du graphique.*
 # 
 
-# In[54]:
+# In[39]:
 
 
 import numpy as np
@@ -1724,7 +1721,7 @@ if __name__ == "__main__":
 #faire des fonctions linéaires par morceaux ?
 
 
-# In[ ]:
+# In[40]:
 
 
 '''plt.figure(figsize=(12, 6))
@@ -1742,7 +1739,7 @@ plt.show()
 # ## Question c
 # Estimer les paramètres de loi GPD
 
-# In[56]:
+# In[41]:
 
 
 from scipy.stats import genpareto
@@ -1793,7 +1790,7 @@ if __name__ == "__main__":
 # ## Question d
 # Faire une validation ex-ante (analyse graphiques, QQ-plot, etc.)
 
-# In[57]:
+# In[42]:
 
 
 import numpy as np
@@ -1885,7 +1882,7 @@ if __name__ == "__main__":
 # $$ 1 - α_{POT} = \frac{n}{N_u} * (1 - α) $$
 # avec $N_u$ le nombre d'observations au dessus du seuil
 
-# In[59]:
+# In[43]:
 
 
 import numpy as np
@@ -1936,7 +1933,7 @@ if __name__ == "__main__":
 # on calcule ensuite la VaR à l'aide de cette formule:
 # $$ VaR_h(α) = - H_{\hat{σ}, \hat{ξ}}^{-1} (α_{POT}) - u  $$
 
-# In[60]:
+# In[73]:
 
 
 from scipy.stats import genpareto
@@ -1986,7 +1983,7 @@ def main():
     # Calculer la VaR TVE par PoT
     var_tve_pot = calculate_var_tve_pot(alpha_pot, c, loc, scale, threshold)
     
-    print(f"La VaR TVE par PoT à {alpha*100}% de confiance est : {var_tve_pot:.4f}")
+    print(f"La VaR TVE par PoT à {alpha*100}% de confiance est : {var_tve_pot*100:.4f}%")
 
 if __name__ == "__main__":
     main()
@@ -2005,7 +2002,7 @@ if __name__ == "__main__":
 # pour chaque seuil, on essaye de tracer une tendance linéaire entre les thresholds et les valeurs du mean excess plot
 # ensuite, on pourrait choisir le seuil u qui permet de maximiser le R carré (car cela voudra dire que nous avons trouvé le seuil tq la droite linéaire s'ajuste le mieux aux données, ie que la relation entre le threshold et le mean excess est la plus représentative)
 
-# In[ ]:
+# In[45]:
 
 
 import numpy as np
