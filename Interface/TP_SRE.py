@@ -270,7 +270,7 @@ if __name__ == "__main__":
     import plotly.io as pio
 
     # Télécharger les données du CAC 40 pour tester
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Définir les dates pour l'ensemble de train et de test
     train_start_date = "2008-10-15"
@@ -324,7 +324,7 @@ def VaR_Hist(x, alpha):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train et test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -417,7 +417,7 @@ def plot_var_bootstrap(x, alpha, alpha_IC, B_min=1000, B_max=10000, step=1000):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train et test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -431,7 +431,7 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train et test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -472,7 +472,7 @@ def count_var_exceptions(df_test, var_value):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train et test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -561,7 +561,7 @@ def VaR_Gauss(x, alpha):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train et test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -626,7 +626,7 @@ def analyze_log_returns(df_train):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -656,7 +656,7 @@ def VaR_Gauss_Scaling(var_gauss_1d, horizon=10):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -708,7 +708,7 @@ def VaR_Gauss_Diffusion(S_0, mu, sigma, alpha, horizon=10, dt=1):
 
 if __name__ == "__main__":
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -791,7 +791,7 @@ def VaR_Gauss_EWMA(returns, alpha, lambd):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -913,7 +913,7 @@ def estimate_skew_student_params(x):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1020,7 +1020,7 @@ def plot_qq_skew_student(df_train):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1094,7 +1094,7 @@ def plot_log_returns_distribution(df_train, mu_hat, sigma_hat, gamma_hat, nu_hat
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1146,7 +1146,7 @@ def calculate_var_student(var, alpha=0.99):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1208,7 +1208,7 @@ def ES_theorique(alpha, VaR, pdf_func):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1305,7 +1305,7 @@ def compute_block_maxima(df, freq='M'):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
 
@@ -1360,7 +1360,7 @@ def plot_block_maxima(df, block_maxima):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
 
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1412,7 +1412,7 @@ def plot_gumbel(block_maxima):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
 
@@ -1458,7 +1458,7 @@ def fit_gev(block_maxima):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1532,7 +1532,7 @@ def plot_gev_diagnostics(block_maxima, c, loc, scale):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1598,7 +1598,7 @@ def compute_var_tve(alpha, c, loc, scale, freq='M'):
 
 def main():
     # Charger les données
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Découpage en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
@@ -1699,8 +1699,8 @@ def plot_mean_excess(df, quantile_plot):
     plt.show()
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données 
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
@@ -1768,11 +1768,11 @@ def fit_gpd_to_exceedances(df, threshold):
     return c, loc, scale
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données 
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     df['neg_log_returns'] = -df['log_returns'] 
     
-    # Découper les données en train/test (exemple, à adapter selon tes besoins)
+    # Découper les données en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Définir le seuil (u) pour l'ajustement GPD
@@ -1850,13 +1850,13 @@ def plot_gpd_diagnostics(exceedances, c, loc, scale):
     plt.show()
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données 
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Transformer les rendements log en rendements négatifs
     df['neg_log_returns'] = -df['log_returns'] 
     
-    # Découper les données en train/test (exemple, à adapter selon tes besoins)
+    # Découper les données en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Définir le seuil (u) pour l'ajustement GPD
@@ -1905,13 +1905,13 @@ def calculate_alpha_pot(df_train, exceedances, alpha):
     return alpha_pot
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Transformer les rendements log en rendements négatifs
     df['neg_log_returns'] = -df['log_returns']
     
-    # Découper les données en train/test (exemple, à adapter selon tes besoins)
+    # Découper les données en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Calculer les excès (pour cet exemple, on suppose un seuil de 0.012)
@@ -1958,13 +1958,13 @@ def calculate_var_tve_pot(alpha_pot, c, loc, scale, u):
     return var_tve_pot
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données 
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Transformer les rendements log en rendements négatifs
     df['neg_log_returns'] = -df['log_returns']
     
-    # Découper les données en train/test (exemple, à adapter selon tes besoins)
+    # Découper les données en train/test 
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Définir le seuil (u) pour l'ajustement GPD
@@ -2061,13 +2061,13 @@ def find_optimal_threshold(data, step=0.001, quantile_cut=0.95):
     return best_u
 
 def main():
-    # Charger les données (exemple, à adapter selon tes données)
-    df = pd.read_csv("fchi_data.csv", parse_dates=['Date'], index_col='Date')
+    # Charger les données
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     
     # Transformer les rendements log en rendements négatifs
     df['neg_log_returns'] = -df['log_returns']
     
-    # Découper les données en train/test (exemple, à adapter selon tes besoins)
+    # Découper les données en train/test
     df_train, df_test = split_train_test(df, "2008-10-15", "2022-07-26", "2022-07-27", "2024-06-11")
     
     # Trouver le seuil optimal
