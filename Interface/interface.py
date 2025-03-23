@@ -10,7 +10,7 @@ from VaR_models import GARCHModel, VaR_traditionnelle, SkewStudentVaR
 
 # Télécharger les données du CAC 40
 data = yf.download("^FCHI")
-data['log_return'] = np.log(data['Close'] / data['Close'].shift(1))
+data['log_returns'] = np.log(data['Close'] / data['Close'].shift(1))
 data = data.dropna()
 
 # Dates par défaut
@@ -577,10 +577,10 @@ def update_pot(ticker, train_start_date, train_end_date, test_start_date,
 )
 def update_graphs(train_start, train_end, test_start, test_end):
     # Filtrage des données en fonction des dates sélectionnées
-    train = data[['log_return', "Close"]][train_start:train_end]
+    train = data[['log_returns', "Close"]][train_start:train_end]
     data_train = train['log_returns']
 
-    test = data[['log_return', "Close"]][test_start:test_end]
+    test = data[['log_returns', "Close"]][test_start:test_end]
     data_test = test['log_returns']
 
     # Fit du modèle GARCH
