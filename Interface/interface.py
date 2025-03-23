@@ -300,21 +300,33 @@ def update_tab(tab_name):
     elif tab_name == 'tab3':
         return dbc.Container([
             html.H1("Analyse de la VaR avec GARCH", className="text-center"),
+            html.P(
+                "Dans cet onglet, nous allons explorer la Value-at-Risk (VaR) avec un modèle GARCH. "
+                "Le modèle GARCH (Generalized Autoregressive Conditional Heteroskedasticity) est une "
+                "extension du modèle ARCH qui permet de modéliser la volatilité conditionnelle des rendements.",
+                className="text-center"
+            ),
+    
             html.Br(),
-
             dbc.Row([
-                dbc.Col(dcc.DatePickerRange(
-                    id='train-range',
-                    start_date=default_train_start,
-                    end_date=default_train_end,
-                    display_format='YYYY-MM-DD'
-                ), width=4),
-                dbc.Col(dcc.DatePickerRange(
-                    id='test-range',
-                    start_date=default_test_start,
-                    end_date=default_test_end,
-                    display_format='YYYY-MM-DD'
-                ), width=4)
+                dbc.Col([
+                    html.Label("Période d'entraînement", className="fw-bold mb-2"),
+                    dcc.DatePickerRange(
+                        id='train-range',
+                        start_date=default_train_start,
+                        end_date=default_train_end,
+                        display_format='YYYY-MM-DD'
+                    )
+                ], width=4),
+                dbc.Col([
+                    html.Label("Période de test", className="fw-bold mb-2"),
+                    dcc.DatePickerRange(
+                        id='test-range',
+                        start_date=default_test_start,
+                        end_date=default_test_end,
+                        display_format='YYYY-MM-DD'
+                    )
+                ], width=4)
             ], className="mb-4"),
 
             dbc.Row([
