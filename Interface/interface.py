@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 from VaR_models import GARCHModel, VaR_traditionnelle, SkewStudentVaR
 
 # Télécharger les données du CAC 40
-data = yf.download("^FCHI")
+data = telecharger_donnees("^FCHI", "2000-01-01")
 data['log_returns'] = np.log(data['Close'] / data['Close'].shift(1))
 data = data.dropna()
 
@@ -577,6 +577,8 @@ def update_pot(ticker, train_start_date, train_end_date, test_start_date,
 )
 def update_graphs(train_start, train_end, test_start, test_end):
     # Filtrage des données en fonction des dates sélectionnées
+    
+    df = telecharger_donnees("^FCHI", "2000-01-01")
     train = data[['log_returns', "Close"]][train_start:train_end]
     data_train = train['log_returns']
 
