@@ -8,6 +8,17 @@ from TP_SRE import *
 import dash_bootstrap_components as dbc
 from VaR_models import GARCHModel, VaR_traditionnelle, SkewStudentVaR
 
+# Télécharger les données du CAC 40
+data = yf.download("^FCHI")
+data['log_return'] = np.log(data['Close'] / data['Close'].shift(1))
+data = data.dropna()
+
+# Dates par défaut
+default_train_start = '2008-10-15'
+default_train_end = '2022-07-26'
+default_test_start = '2022-07-27'
+default_test_end = '2024-06-11'
+
 
 # Initialisation de l'application Dash
 app = dash.Dash(__name__, suppress_callback_exceptions=True)
@@ -566,17 +577,6 @@ def update_pot(ticker, train_start_date, train_end_date, test_start_date,
 )
 def update_graphs(train_start, train_end, test_start, test_end):
     # Filtrage des données en fonction des dates sélectionnées
-
-    # Télécharger les données du CAC 40
-    data = yf.download("^FCHI")
-    data['log_return'] = np.log(data['Close'] / data['Close'].shift(1))
-    data = data.dropna()
-
-    # Dates par défaut
-    default_train_start = '2008-10-15'
-    default_train_end = '2022-07-26'
-    default_test_start = '2022-07-27'
-    default_test_end = '2024-06-11'
     train = data[['log_return', "Close"]][train_start:train_end]
     data_train = train['log_return']
 
