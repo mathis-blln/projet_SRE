@@ -5,14 +5,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 from TP_SRE import *
-
-import numpy as np
-import pandas as pd
-import yfinance as yf
-import dash
 import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
-from dash import dcc, html, Input, Output
 from VaR_models import GARCHModel, VaR_traditionnelle, SkewStudentVaR
 
 # Télécharger les données du CAC 40
